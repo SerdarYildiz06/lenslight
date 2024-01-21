@@ -36,15 +36,17 @@ const loginUser = async (req, res) => {
 
     if (same) {
       const token = createToken(user._id);
-      res.cookie("jsonwebtoken", token, {
+      //for saving token in cookie only for web
+      res.cookie("jwt", token, {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24, //1 day
       });
 
-      res.status(200).json({
-        user,
-        token: createToken(user._id),
-      });
+      // res.status(200).json({
+      //   user,
+      //   token: createToken(user._id),
+      // });
+      res.redirect("/users/dashboard");
     } else {
       res.status(401).json({
         succeded: false,
@@ -63,4 +65,10 @@ const createToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
-export { createUser, loginUser };
+const getDashboardPage = (req, res) => {
+  res.render("dashboard", {
+    link: "dashboard",
+  });
+};
+
+export { createUser, loginUser, getDashboardPage };
